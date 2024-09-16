@@ -1,26 +1,33 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { getFilter } from '../../redux/selectors';
-import { setFilter } from '../../redux/filterSlice';
-import css from './filter.module.css'
-export const Filter = () => {
-  const dispatch = useDispatch();
-  const { findBy, value } = useSelector(getFilter);
-  const handleSearch = e => {
-    dispatch(setFilter({ value: e.target.value, findBy }));
-  };
+import PropTypes from 'prop-types';
+import css from './filter.module.css';
+import { Input } from '@chakra-ui/react'
 
-  const handleFindBy = e => {
-    e.preventDefault();
-    dispatch(setFilter({ value, findBy: findBy === 'name' ? 'number' : 'name' }))
+export const Filter = ({ filter, setFilter }) => {
+  const handleFilterChange = e => {
+    setFilter(e.target.value);
   };
 
   return (
-    <div className={css.searchCont}>
-     <input type="search" placeholder='Search by name' onChange={handleSearch} />
-      <div>
-        <button type="button" style={{ width: '75px' }}
-        onClick={handleFindBy}>Search</button>
-      </div>
+    <div>
+  
+      <Input
+       maxW="lg"
+       borderWidth={1}
+       borderRadius="md"
+       boxShadow="lg"
+      mb="30"
+        className={css.filterInput}
+        type="text"
+        name="filter"
+        placeholder="Find contacts by name"
+        value={filter}
+        onChange={handleFilterChange}
+      />
     </div>
-  )
-}
+  );
+};
+
+Filter.propTypes = {
+  filter: PropTypes.string.isRequired,
+  setFilter: PropTypes.func.isRequired,
+};

@@ -7,7 +7,7 @@ const initialState = {
   error: null,
 };
 
-const contactsSlice = createSlice({
+export const contactsSlice = createSlice({
   name: 'contacts',
   initialState,
   reducers: {},

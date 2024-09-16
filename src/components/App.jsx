@@ -1,40 +1,46 @@
-import { ContactForm } from './ContactForm/ContactForm';
-import { ContactList } from './ContactList/ContactList';
-import { Filter } from './Filter/Filter';
-import { useDispatch, useSelector } from 'react-redux';
-import { getIsLoading } from '../redux/selectors';
-import { fetchContacts } from '../redux/operations';
-import { useEffect } from 'react';
-import { TailSpin } from 'react-loader-spinner';
+import { SharedLayout } from '../SharedLayout/sharedLayout';
+// import { HomePage } from 'pages/HomePage';
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import LoginPage from '../Pages/LoginPage';
+import RegisterPage from '../Pages/RegisterPage';
+import { RestrictedRoute } from './RestrictedRoute/RestrictedRoute';
+import { PrivateRoute } from './PrivateRoute/PrivateRoute';
+import { ContactsPage } from '../Pages/ContactsPage';
+import { ChakraProvider } from '@chakra-ui/react';
 
-export function App() {
-  const dispatch = useDispatch();
-  const isLoading = useSelector(getIsLoading);
+export const App = () => {
+  return (
+    <ChakraProvider>
+      <>
+        <Routes>
+          <Route path="/" element={<SharedLayout />}>
+            <Route index element={<LoginPage />} />
+            <Route
+              path="/register"
+              element={
+                <RestrictedRoute
+                  redirectTo="/contacts"
+                  component={RegisterPage}
+                />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <RestrictedRoute redirectTo="/contacts" component={LoginPage} />
+              }
+            />
+          </Route>
 
-
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
-
-
-    return (
-      <div className="container">
-        <h1>Phonebook</h1>
-        <div className="phonebook-container">
-          <div>
-          <ContactForm />
-          </div>
-          <div>
-            <h2>Contacts</h2>
-            <Filter />
-            {isLoading && (
-          <TailSpin/>
-        )}
-            <ContactList />
-            
-          </div>
-        </div>
-      </div>
-    );
-
-}
+          <Route
+            path="/contacts"
+            element={
+              <PrivateRoute redirectTo="/login" component={ContactsPage} />
+            }
+          />
+        </Routes>
+      </>
+    </ChakraProvider>
+  );
+};

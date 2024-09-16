@@ -1,29 +1,49 @@
-import { ContactListItem } from '../ContactListItem/ContactListItem';
-import css from './ContactList.module.css';
-import { useSelector } from 'react-redux';
-import { getContacts, getFilter } from '../../redux/selectors';
+import React from 'react';
+import { ContactListItem } from '../Items/Items';
+import PropTypes from 'prop-types';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  TableContainer,
+} from '@chakra-ui/react'
 
-const getFilteredContacts = (contacts, filter) => {
-  return contacts?.filter(c => filter
-    .findBy === '' || c[filter.findBy].toLowerCase().includes(filter.value)) || [];
+
+export const ContactList = ({ contacts, deleteContact }) => {
+  return (
+    <TableContainer>
+    <Table variant='simple'>
+      <Thead>
+        <Tr>
+          <Th>Name</Th>
+          <Th>Phone</Th>
+          <Th>Actions</Th>
+        </Tr>
+      </Thead>
+      <Tbody>
+        {contacts.map(contact => (
+          <ContactListItem
+            key={contact.id}
+            filteredContact={contact}
+            deleteContact={deleteContact}
+          />
+        ))}
+      </Tbody>
+    </Table>
+    </TableContainer>
+
+  );
 };
 
-export const ContactList = () => {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
-
-  const filteredContacts = getFilteredContacts(contacts, filter);
-
-  return (
-    <div className={css['contact-list']}>
-    <ul>
-      {filteredContacts.map(contact => (
-        <ContactListItem
-          key={contact.id}
-          contact={contact}
-        />
-      ))}
-    </ul>
-    </div>
-  );
+ContactList.propTypes = {
+  contacts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+    }).isRequired
+  ).isRequired,
+  deleteContact: PropTypes.func.isRequired,
 };
